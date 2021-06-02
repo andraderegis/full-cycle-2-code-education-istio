@@ -1,0 +1,31 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: nginx-virtual-service
+spec:
+  hosts:
+    # nome do service declarado no kubernetes
+    - nginx-service
+  http:
+    - route:
+        - destination:
+            host: nginx-service
+            # nome do subset, constante em um arquivo de configurações de destination rules
+            subset: all
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: nginx-destination-rule
+spec:
+  # nome do service declarado no kubernetes
+  host: nginx-service
+  trafficPolicy:
+    loadBalancer:
+      consistentHash:
+        httpHeaderName: "x-user"
+  subsets:
+    - name: all
+      labels:
+        app: nginx
