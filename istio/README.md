@@ -1,0 +1,1 @@
+# Fullcycle 2 - K8s com Istio
