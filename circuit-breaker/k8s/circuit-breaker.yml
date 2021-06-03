@@ -1,0 +1,14 @@
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: circuit-breaker-nodejs-circuit-breaker-app
+spec:
+  host: nodejs-circuit-breaker-app-service.default.svc.cluster.local
+  trafficPolicy:
+    outlierDetection:
+      consecutiveGatewayErrors: 10
+      interval: 20s
+      #indisponibiliza o serviço por 30s
+      baseEjectionTime: 30s
+      #percentual de remoção de pods
+      maxEjectionPercent: 100
