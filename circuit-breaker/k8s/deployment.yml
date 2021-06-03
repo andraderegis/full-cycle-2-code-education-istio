@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-circuit-breaker-app-fine
+spec:
+  selector:
+    matchLabels:
+      app: nodejs-circuit-breaker-app
+  template:
+    metadata:
+      labels:
+        app: nodejs-circuit-breaker-app
+        version: "fine"
+    spec:
+      containers:
+        - name: nodejs-circuit-breaker-app
+          image: andradereginaldo/node_circuit_breaker_example:latest
+          resources:
+            limits:
+              memory: "100Mi"
+              cpu: "100m"
+          ports:
+            - containerPort: 3000
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-circuit-breaker-app-error
+spec:
+  selector:
+    matchLabels:
+      app: nodejs-circuit-breaker-app
+  template:
+    metadata:
+      labels:
+        app: nodejs-circuit-breaker-app
+        version: "error"
+    spec:
+      containers:
+        - name: nodejs-circuit-breaker-app
+          image: andradereginaldo/node_circuit_breaker_example:latest
+          resources:
+            limits:
+              memory: "100Mi"
+              cpu: "100m"
+          ports:
+            - containerPort: 3000
+          env:
+            - name: ERROR
+              value: "yes"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejs-circuit-breaker-app-service
+spec:
+  type: ClusterIP
+  selector:
+    app: nodejs-circuit-breaker-app
+  ports:
+    - port: 80
+      targetPort: 3000
